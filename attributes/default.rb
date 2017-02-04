@@ -27,3 +27,4 @@ default['drbd']['port'] = 7789
 default['drbd']['configured'] = false
 default['drbd']['custom-repo'] = false
 default['drbd']['resource'] = 'r0'
+default['drbd']['template_cookbook'] = 'drbd'

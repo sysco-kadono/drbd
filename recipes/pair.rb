@@ -30,6 +30,7 @@ end
 
 template "/etc/drbd.d/#{resource}.res" do
   source 'res.erb'
+  cookbook node['drbd']['template_cookbook']
   variables(
     resource: resource,
     remote_ip: node['drbd']['remote_ip']
