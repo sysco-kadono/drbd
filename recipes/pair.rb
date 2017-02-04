@@ -22,7 +22,7 @@ require 'chef/shell_out'
 
 include_recipe 'drbd'
 
-resource = 'pair'
+resource = node['drbd']['resource']
 
 if node['drbd']['remote_host'].nil?
   Chef::Application.fatal! "You must have a ['drbd']['remote_host'] defined to use the drbd::pair recipe."
