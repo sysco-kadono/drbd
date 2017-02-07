@@ -53,9 +53,15 @@ execute "drbdadm create-md #{resource}" do
   action :nothing
 end
 
+execute "drbdadm attach #{resource}" do
+  subscribes :run, "execute[drbdadm create-md #{resource}]"
+  only_if { node['drbd']['master'] && !node['drbd']['configured'] }
+  action :nothing
+end
+
 # claim primary based off of node['drbd']['master']
 execute 'drbdadm -- --overwrite-data-of-peer primary all' do
-  subscribes :run, "execute[drbdadm create-md #{resource}]"
+  subscribes :run, "execute[drbdadm attach #{resource}]"
   only_if { node['drbd']['master'] && !node['drbd']['configured'] }
   action :nothing
 end
