@@ -78,12 +78,12 @@ directory node['drbd']['mount'] do
   action :create
 end
 
-# mount -t xfs -o rw /dev/drbd0 /shared
+# mount -t xfs -o rw /dev/drbd0 /appsdat
 mount node['drbd']['mount'] do
   device node['drbd']['dev']
   fstype node['drbd']['fs_type']
   only_if { node['drbd']['master'] && node['drbd']['configured'] }
-  action :mount
+  action :nothing
 end
 
 # HACK: to get around the mount failing
@@ -92,5 +92,6 @@ ruby_block 'set drbd configured flag' do
     node.normal['drbd']['configured'] = true
   end
   subscribes :create, "execute[mkfs -t #{node['drbd']['fs_type']} #{node['drbd']['dev']}]"
+  notifies :mount, "mount[#{node['drbd']['mount']}]"
   action :nothing
 end
