@@ -55,7 +55,10 @@ end
 
 execute "drbdadm attach #{resource}" do
   subscribes :run, "execute[drbdadm create-md #{resource}]"
-  only_if { node['drbd']['master'] && !node['drbd']['configured'] }
+  # 既に attach されていた際の return 20 にも対応しておく
+  returns [0, 20]
+  retries 2
+  retry_delay 10
   action :nothing
 end
 
@@ -92,6 +95,6 @@ ruby_block 'set drbd configured flag' do
     node.normal['drbd']['configured'] = true
   end
   subscribes :create, "execute[mkfs -t #{node['drbd']['fs_type']} #{node['drbd']['dev']}]"
-  notifies :mount, "mount[#{node['drbd']['mount']}]"
+  notifies :mount,  "mount[#{node['drbd']['mount']}]"
   action :nothing
 end
